@@ -41,6 +41,15 @@
     .logo-text .fl { color: var(--yellow); }
     nav.scrolled .logo-text { color: var(--dark); text-shadow: none; }
     nav.scrolled .logo-text .fl { color: var(--red); }
+    .logo-img {
+      height: 48px; width: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+    .logo-img:hover { transform: scale(1.06); }
     nav ul { list-style: none; display: flex; gap: 2rem; }
     nav ul a {
       color: rgba(255,255,255,0.88); text-decoration: none;
@@ -500,7 +509,7 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <div class="logo-text">SUPER <span class="fl">FLASH</span> CHICKEN</div>
+  <img src="assets/logo.jpg" alt="Super Flash Chicken" class="logo-img">
   <ul>
     <li><a href="#menu">Carta</a></li>
     <li><a href="#delivery">Delivery</a></li>
@@ -864,7 +873,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-brand">SUPER <span class="fl">FLASH</span> CHICKEN</div>
+    <img src="assets/logo.jpg" alt="Super Flash Chicken" style="height:40px;width:40px;border-radius:50%;object-fit:cover;opacity:0.7;">
     <p>© 2026 Super Flash Chicken · Av. Palermo 405, Balconcillo, La Victoria, Lima</p>
     <a href="https://www.facebook.com/flashchiken2/" target="_blank">Facebook</a>
   </div>
