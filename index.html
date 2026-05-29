@@ -477,7 +477,13 @@
       .hero-sub { max-width: 100%; }
 
       /* Video: full fill portrait — cover no scale */
-      .hero-video { object-fit: cover; transform: none; }
+      .hero-video--mobile {
+        object-fit: cover;
+        object-position: center top;
+        transform: none;
+        width: 100%;
+        height: 100%;
+      }
 
       /* Hero badge: fix overflow, reduce letter-spacing */
       .hero-badge {
@@ -549,7 +555,7 @@
     <source src="assets/hero-desktop.mp4" type="video/mp4">
   </video>
   <video class="hero-video hero-video--mobile" autoplay loop muted playsinline>
-    <source src="assets/hero.mp4" type="video/mp4">
+    <source src="assets/hero-mobile.mp4" type="video/mp4">
   </video>
   <div class="hero-overlay"></div>
   <!-- Decorative bolt shapes (SVG, no emoji) -->
