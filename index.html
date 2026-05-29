@@ -43,9 +43,10 @@
     nav.scrolled .logo-text { color: var(--dark); text-shadow: none; }
     nav.scrolled .logo-text .fl { color: var(--red); }
     .logo-img {
-      height: 48px; width: auto;
+      height: 48px; width: 48px;
       display: block;
-      object-fit: contain;
+      object-fit: cover;
+      border-radius: 50%;
       transition: transform 0.2s;
     }
     .logo-img:hover { transform: scale(1.04); }
@@ -872,7 +873,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <img src="assets/logo.jpg" alt="Super Flash Chicken" style="height:40px;width:40px;border-radius:50%;object-fit:cover;opacity:0.7;">
+    <img src="assets/logo.jpg" alt="Super Flash Chicken" style="height:40px;width:40px;border-radius:50%;object-fit:cover;opacity:0.7;flex-shrink:0;">
     <p>© 2026 Super Flash Chicken · Av. Palermo 405, Balconcillo, La Victoria, Lima</p>
     <a href="https://www.facebook.com/flashchiken2/" target="_blank">Facebook</a>
   </div>
