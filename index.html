@@ -115,6 +115,11 @@
       position: absolute; inset: 0; z-index: 0;
       width: 100%; height: 100%; object-fit: cover;
     }
+    .hero-video--mobile { display: none; }
+    @media (max-width: 768px) {
+      .hero-video--desktop { display: none; }
+      .hero-video--mobile  { display: block; }
+    }
     .hero-overlay {
       position: absolute; inset: 0; z-index: 1; pointer-events: none;
       background: linear-gradient(145deg, rgba(192,16,8,0.75) 0%, rgba(232,21,10,0.68) 50%, rgba(192,16,8,0.75) 100%);
@@ -540,7 +545,10 @@
 
 <!-- HERO -->
 <section id="hero">
-  <video class="hero-video" autoplay loop muted playsinline>
+  <video class="hero-video hero-video--desktop" autoplay loop muted playsinline>
+    <source src="assets/hero-desktop.mp4" type="video/mp4">
+  </video>
+  <video class="hero-video hero-video--mobile" autoplay loop muted playsinline>
     <source src="assets/hero.mp4" type="video/mp4">
   </video>
   <div class="hero-overlay"></div>
