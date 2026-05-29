@@ -75,17 +75,26 @@
     .nav-burger.open span:nth-child(2) { opacity: 0; }
     .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .nav-mobile {
-      display: none; position: fixed; inset: 0; z-index: 105;
+      display: flex; position: fixed; inset: 0; z-index: 105;
       background: var(--red);
       flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
-    .nav-mobile.open { display: flex; }
+    .nav-mobile.open { opacity: 1; visibility: visible; pointer-events: all; }
     .nav-mobile a {
       font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 900;
       color: #fff; text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase;
       transition: color 0.2s;
     }
     .nav-mobile a:hover { color: var(--yellow); }
+    .nav-mobile-close {
+      position: absolute; top: 1rem; right: 1.2rem;
+      background: none; border: none; cursor: pointer;
+      color: #fff; padding: 0.5rem; line-height: 0;
+      transition: color 0.2s;
+    }
+    .nav-mobile-close:hover { color: var(--yellow); }
 
     /* HERO */
     #hero {
@@ -486,6 +495,11 @@
 
 <!-- MOBILE MENU -->
 <div class="nav-mobile" id="nav-mobile">
+  <button class="nav-mobile-close" id="nav-close" aria-label="Cerrar menú">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
   <a href="#menu"     class="nav-mobile-link">Carta</a>
   <a href="#delivery" class="nav-mobile-link">Delivery</a>
   <a href="#contact"  class="nav-mobile-link">Ubicación</a>
@@ -852,17 +866,29 @@
   // Hamburger
   const burger = document.getElementById('burger');
   const mob    = document.getElementById('nav-mobile');
+
+  const closeMenu = () => {
+    burger.classList.remove('open');
+    mob.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
   burger.addEventListener('click', () => {
+    const opening = !mob.classList.contains('open');
     burger.classList.toggle('open');
     mob.classList.toggle('open');
-    document.body.style.overflow = mob.classList.contains('open') ? 'hidden' : '';
+    document.body.style.overflow = opening ? 'hidden' : '';
   });
+
+  // X button
+  document.getElementById('nav-close').addEventListener('click', closeMenu);
+
+  // Click on overlay background (not on links/buttons)
+  mob.addEventListener('click', (e) => { if (e.target === mob) closeMenu(); });
+
+  // Links close menu
   document.querySelectorAll('.nav-mobile-link, .nav-mobile a').forEach(l => {
-    l.addEventListener('click', () => {
-      burger.classList.remove('open');
-      mob.classList.remove('open');
-      document.body.style.overflow = '';
-    });
+    l.addEventListener('click', closeMenu);
   });
 
   // Scroll reveal
