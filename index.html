@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Super Flash Chicken – Pollería & Delivery | Balconcillo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red:   #E8150A;
+      --red2:  #C01008;
+      --red3:  #FF2A1E;
+      --yellow:#FFD700;
+      --gold:  #FFA500;
+      --dark:  #1a0500;
+      --cream: #FFFBF0;
+      --light: #FFF5E0;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--dark); overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2.5rem;
+      transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    nav.scrolled {
+      background: rgba(255,251,240,0.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 2px solid var(--red);
+      box-shadow: 0 2px 24px rgba(232,21,10,0.14);
+    }
+    .logo-text {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.4rem; font-weight: 900; letter-spacing: 0.07em;
+      color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+    .logo-text .fl { color: var(--yellow); }
+    nav.scrolled .logo-text { color: var(--dark); text-shadow: none; }
+    nav.scrolled .logo-text .fl { color: var(--red); }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a {
+      color: rgba(255,255,255,0.88); text-decoration: none;
+      font-size: 0.85rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--yellow); }
+    nav.scrolled ul a { color: rgba(26,5,0,0.65); }
+    nav.scrolled ul a:hover { color: var(--red); }
+    .nav-cta {
+      background: var(--yellow); color: var(--dark) !important;
+      padding: 0.55rem 1.4rem;
+      font-family: 'Oswald', sans-serif !important;
+      font-weight: 900 !important; letter-spacing: 0.09em !important;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      box-shadow: 0 4px 18px rgba(255,215,0,0.5);
+      transition: box-shadow 0.25s, transform 0.2s !important;
+    }
+    .nav-cta:hover { box-shadow: 0 6px 30px rgba(255,215,0,0.78); transform: translateY(-1px); }
+
+    /* Hamburger */
+    .nav-burger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 6px; background: none; border: none; z-index: 110;
+    }
+    .nav-burger span {
+      display: block; width: 24px; height: 2.5px; background: #fff; border-radius: 1px;
+      transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
+    }
+    nav.scrolled .nav-burger span { background: var(--dark); }
+    .nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-burger.open span:nth-child(2) { opacity: 0; }
+    .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile {
+      display: none; position: fixed; inset: 0; z-index: 105;
+      background: var(--red);
+      flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
+    }
+    .nav-mobile.open { display: flex; }
+    .nav-mobile a {
+      font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 900;
+      color: #fff; text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-mobile a:hover { color: var(--yellow); }
+
+    /* HERO */
+    #hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+      background: linear-gradient(145deg, #C01008 0%, var(--red) 40%, #E82010 70%, #C01008 100%);
+    }
+    #hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+      background-image: repeating-linear-gradient(
+        -55deg, transparent, transparent 40px,
+        rgba(255,215,0,0.04) 40px, rgba(255,215,0,0.04) 42px
+      );
+    }
+    /* decorative SVG bolt shapes via CSS */
+    .deco-bolt {
+      position: absolute; z-index: 2; pointer-events: none;
+      opacity: 0.1; animation: flicker 6s ease-in-out infinite;
+    }
+    .deco-bolt.l { left: -2%; top: 5%; transform: rotate(-15deg) scale(1); animation-delay: 0s; }
+    .deco-bolt.r { right: -2%; bottom: 3%; transform: rotate(10deg); opacity: 0.08; animation-delay: 2.5s; }
+    canvas#sparks { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+    .hero-inner {
+      position: relative; z-index: 4;
+      text-align: center; padding: 120px 1.5rem 80px; max-width: 920px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 2px solid rgba(255,215,0,0.4);
+      background: rgba(255,215,0,0.1);
+      color: var(--yellow); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 0.42rem 1.2rem; border-radius: 2px;
+      margin-bottom: 1.5rem;
+      opacity: 0; transform: translateY(16px);
+      animation: fadeUp 0.7s 0.3s forwards;
+    }
+    .hero-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(4rem, 13vw, 10rem);
+      font-weight: 900; line-height: 0.88; letter-spacing: 0.01em; color: #fff;
+      text-shadow: 0 4px 0 rgba(0,0,0,0.25);
+      opacity: 0; transform: translateY(32px);
+      animation: fadeUp 0.9s 0.5s forwards;
+    }
+    .hero-title .flash {
+      display: block; color: var(--yellow);
+      text-shadow: 0 4px 0 rgba(150,100,0,0.4), 0 0 60px rgba(255,215,0,0.5);
+      animation: pulse-text 2s ease-in-out infinite;
+    }
+    .hero-title .chicken { display: block; font-size: 0.62em; color: rgba(255,255,255,0.9); text-shadow: 0 3px 0 rgba(0,0,0,0.2); }
+    .hero-sub {
+      margin: 1.5rem auto 0;
+      font-size: clamp(1rem, 2.2vw, 1.15rem);
+      color: rgba(255,255,255,0.75); line-height: 1.75; max-width: 460px;
+      opacity: 0; transform: translateY(20px);
+      animation: fadeUp 0.9s 0.75s forwards;
+    }
+    .hero-phones {
+      display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap;
+      margin-top: 1.8rem;
+      opacity: 0; transform: translateY(20px);
+      animation: fadeUp 0.8s 0.9s forwards;
+    }
+    .phone-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.14);
+      border: 1.5px solid rgba(255,255,255,0.32);
+      color: #fff; font-size: 0.83rem; font-weight: 700;
+      padding: 0.45rem 1rem; border-radius: 3px; text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .phone-pill svg { opacity: 0.7; }
+    .phone-pill:hover { background: rgba(255,215,0,0.18); border-color: var(--yellow); }
+    .hero-actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      margin-top: 2.4rem;
+      opacity: 0; transform: translateY(20px);
+      animation: fadeUp 0.9s 1.1s forwards;
+    }
+    .btn-main {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      background: var(--yellow); color: var(--dark);
+      padding: 1rem 2.4rem;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 900; font-size: 1.1rem; letter-spacing: 0.1em; text-transform: uppercase;
+      text-decoration: none;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      box-shadow: 0 6px 28px rgba(255,215,0,0.5);
+      transition: transform 0.2s, box-shadow 0.25s;
+    }
+    .btn-main:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 40px rgba(255,215,0,0.75); }
+    .btn-outline-w {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      border: 2.5px solid rgba(255,255,255,0.5); color: #fff;
+      padding: 1rem 2rem;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700; font-size: 1rem; letter-spacing: 0.09em; text-transform: uppercase;
+      text-decoration: none; background: rgba(255,255,255,0.07);
+      transition: border-color 0.25s, background 0.25s, transform 0.2s, color 0.2s;
+    }
+    .btn-outline-w:hover { border-color: var(--yellow); color: var(--yellow); background: rgba(255,215,0,0.1); transform: translateY(-3px); }
+    .scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 0.45rem;
+      color: rgba(255,255,255,0.3); font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+      animation: bounce 2.2s infinite;
+    }
+
+    /* STATS */
+    #stats {
+      position: relative; z-index: 1;
+      background: var(--yellow);
+      border-top: 3px solid var(--gold); border-bottom: 3px solid var(--gold);
+      box-shadow: 0 4px 30px rgba(255,165,0,0.4);
+      display: flex; flex-wrap: wrap;
+    }
+    .stat {
+      flex: 1; min-width: 160px;
+      text-align: center; padding: 1.8rem 1.5rem;
+      border-right: 2px solid rgba(200,120,0,0.2);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .stat:last-child { border-right: none; }
+    .stat.visible { opacity: 1; transform: none; }
+    .stat-num { font-family: 'Oswald', sans-serif; font-size: 2.4rem; font-weight: 900; color: var(--dark); }
+    .stat-label { font-size: 0.73rem; color: rgba(26,5,0,0.6); margin-top: 0.2rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* SHARED */
+    section { position: relative; z-index: 1; padding: 6rem 2rem; }
+    .section-label {
+      text-align: center; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.25em; text-transform: uppercase; color: var(--red);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      text-align: center;
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 900;
+      color: var(--dark); margin-bottom: 0.8rem;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .section-title .hl { color: var(--red); }
+    .section-sub { text-align: center; color: rgba(26,5,0,0.48); font-size: 1rem; max-width: 480px; margin: 0 auto 3.5rem; line-height: 1.8; }
+
+    /* MENU */
+    #menu { background: var(--cream); }
+    .menu-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+    }
+    .menu-card {
+      background: #fff;
+      border: 2px solid rgba(232,21,10,0.13);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(232,21,10,0.06);
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .menu-card.visible { opacity: 1; transform: none; }
+    .menu-card:hover { border-color: var(--red); box-shadow: 0 8px 40px rgba(232,21,10,0.18); transform: translateY(-6px); }
+    .menu-card-head {
+      background: linear-gradient(135deg, var(--red), var(--red2));
+      padding: 1.1rem 1.4rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .menu-card-head h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.2rem; font-weight: 700; color: #fff;
+      letter-spacing: 0.07em; text-transform: uppercase;
+    }
+    .card-head-icon { width: 22px; height: 22px; opacity: 0.7; }
+    .menu-card-body { padding: 1.1rem 1.4rem; }
+    .menu-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 0; border-bottom: 1px solid rgba(232,21,10,0.07); gap: 0.8rem;
+    }
+    .menu-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .item-name { font-size: 0.85rem; color: rgba(26,5,0,0.62); flex: 1; line-height: 1.4; }
+    .item-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+    .item-price { font-family: 'Oswald', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--red); }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 0.2rem;
+      background: #25D366; color: #fff;
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em;
+      padding: 0.28rem 0.6rem; border-radius: 3px; text-decoration: none; white-space: nowrap;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-wa:hover { background: #1da851; transform: scale(1.05); }
+
+    /* FEATURED */
+    #featured {
+      background: linear-gradient(140deg, var(--red) 0%, var(--red2) 60%, #A00806 100%);
+      position: relative; overflow: hidden;
+    }
+    #featured::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: repeating-linear-gradient(
+        -55deg, transparent, transparent 40px,
+        rgba(255,215,0,0.04) 40px, rgba(255,215,0,0.04) 42px
+      );
+    }
+    .featured-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .featured-visual {
+      position: relative; border-radius: 12px; overflow: hidden;
+      background: rgba(0,0,0,0.25);
+      border: 2px solid rgba(255,215,0,0.28);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      min-height: 340px; display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateX(-50px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .featured-visual.visible { opacity: 1; transform: none; }
+    .featured-visual img { width: 100%; display: block; }
+    .price-stamp {
+      position: absolute; top: 1.3rem; right: 1.3rem;
+      width: 90px; height: 90px; border-radius: 50%;
+      background: conic-gradient(var(--yellow), var(--gold), var(--yellow));
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 0 30px rgba(255,165,0,0.6);
+      animation: spin-stamp 10s linear infinite;
+    }
+    .ps-label  { font-size: 0.5rem; font-weight: 700; color: #1a0000; letter-spacing: 0.1em; text-transform: uppercase; }
+    .ps-amount { font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 900; color: #1a0000; line-height: 1; }
+    .featured-text {
+      opacity: 0; transform: translateX(50px);
+      transition: opacity 0.75s 0.15s ease, transform 0.75s 0.15s ease;
+    }
+    .featured-text.visible { opacity: 1; transform: none; }
+    .featured-text .section-label { text-align: left; color: var(--yellow); opacity: 0.85; }
+    .featured-text .section-title { text-align: left; font-size: 2.4rem; color: #fff; }
+    .featured-text .section-title .hl { color: var(--yellow); }
+    .featured-text p { color: rgba(255,255,255,0.7); line-height: 1.85; margin-bottom: 1.5rem; font-size: 0.93rem; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 2rem; }
+    .tag {
+      background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.25);
+      color: #fff; font-size: 0.77rem; font-weight: 600;
+      padding: 0.28rem 0.8rem; border-radius: 3px; letter-spacing: 0.04em;
+    }
+
+    /* DELIVERY */
+    #delivery { background: var(--light); }
+    .delivery-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.2rem; max-width: 960px; margin: 0 auto;
+    }
+    .info-card {
+      background: #fff; border: 2px solid rgba(232,21,10,0.1);
+      border-radius: 12px; padding: 1.8rem 1.4rem; text-align: center;
+      box-shadow: 0 3px 16px rgba(232,21,10,0.05);
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .info-card:hover { border-color: var(--red); box-shadow: 0 6px 28px rgba(232,21,10,0.15); transform: translateY(-4px); }
+    .info-card.visible { opacity: 1; transform: none; }
+    .info-icon { display: flex; justify-content: center; margin-bottom: 0.9rem; }
+    .info-icon svg { color: var(--red); }
+    .info-card h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.95rem; font-weight: 700; color: var(--dark);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.6rem;
+    }
+    .info-card p { font-size: 0.88rem; color: rgba(26,5,0,0.52); line-height: 1.8; }
+    .info-card a { color: var(--red); text-decoration: none; font-weight: 700; }
+    .info-card a:hover { text-decoration: underline; }
+
+    /* CONTACT */
+    #contact { background: var(--cream); }
+    .contact-inner {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;
+    }
+    .contact-info h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.4rem; color: var(--dark);
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .contact-row { display: flex; gap: 0.9rem; align-items: flex-start; margin-bottom: 1.4rem; }
+    .c-icon { flex-shrink: 0; margin-top: 0.18rem; color: var(--red); }
+    .c-text { color: rgba(26,5,0,0.52); font-size: 0.9rem; line-height: 1.75; }
+    .c-text strong { color: var(--dark); display: block; margin-bottom: 0.15rem; font-weight: 700; }
+    .c-text a { color: var(--red); text-decoration: none; font-weight: 700; }
+    .c-text a:hover { text-decoration: underline; }
+    .map-wrap {
+      border-radius: 12px; overflow: hidden;
+      border: 2px solid rgba(232,21,10,0.16);
+      box-shadow: 0 6px 30px rgba(232,21,10,0.07);
+      height: 320px;
+    }
+    .map-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+
+    /* FOOTER */
+    footer { position: relative; z-index: 1; background: var(--dark); padding: 2rem; }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 960px; margin: 0 auto; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand { font-family: 'Oswald', sans-serif; font-weight: 900; color: rgba(255,255,255,0.3); font-size: 0.95rem; letter-spacing: 0.1em; }
+    .footer-brand .fl { color: rgba(255,215,0,0.55); }
+    footer p { color: rgba(255,255,255,0.22); font-size: 0.78rem; }
+    footer a { color: rgba(255,215,0,0.45); text-decoration: none; }
+
+    /* WA FLOAT */
+    .wa-float {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 200;
+      background: linear-gradient(135deg, #25D366, #1da851);
+      color: #fff; width: 60px; height: 60px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+      text-decoration: none;
+      transition: transform 0.25s, box-shadow 0.25s;
+      animation: pulse-wa 2.5s infinite;
+    }
+    .wa-float:hover { transform: scale(1.12); box-shadow: 0 8px 32px rgba(37,211,102,0.7); }
+
+    /* KEYFRAMES */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes bounce { 0%,100% { transform:translateX(-50%) translateY(0); } 50% { transform:translateX(-50%) translateY(9px); } }
+    @keyframes pulse-text {
+      0%,100% { text-shadow: 0 4px 0 rgba(150,100,0,0.4), 0 0 60px rgba(255,215,0,0.5); }
+      50%      { text-shadow: 0 4px 0 rgba(150,100,0,0.4), 0 0 90px rgba(255,215,0,0.85); }
+    }
+    @keyframes spin-stamp { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+    @keyframes flicker { 0%,90%,100% { opacity:0.1; } 92% { opacity:0.22; } 94% { opacity:0.1; } 97% { opacity:0.18; } }
+    @keyframes pulse-wa { 0%,100% { box-shadow:0 4px 20px rgba(37,211,102,0.5); } 50% { box-shadow:0 4px 38px rgba(37,211,102,0.85); } }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav ul { display: none; }
+      .nav-burger { display: flex; }
+      section { padding: 4rem 1.2rem; }
+      .featured-inner, .contact-inner { grid-template-columns: 1fr; }
+      .featured-visual { transform: none !important; opacity: 1 !important; }
+      .featured-text  { transform: none !important; opacity: 1 !important; }
+      .hero-title { font-size: clamp(3.5rem, 14vw, 6rem); }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .hero-actions a { width: 100%; max-width: 300px; justify-content: center; }
+      nav { padding: 0.8rem 1.2rem; }
+      #stats { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 2px solid rgba(200,120,0,0.18); }
+      .stat:last-child { border-bottom: none; }
+    }
+    @media (max-width: 480px) {
+      .menu-grid, .delivery-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo-text">SUPER <span class="fl">FLASH</span> CHICKEN</div>
+  <ul>
+    <li><a href="#menu">Carta</a></li>
+    <li><a href="#delivery">Delivery</a></li>
+    <li><a href="#contact">Ubicación</a></li>
+    <li><a href="https://wa.me/51935257048?text=Hola!%20Quiero%20hacer%20un%20pedido" target="_blank" class="nav-cta">Pedir ya</a></li>
+  </ul>
+  <button class="nav-burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="nav-mobile" id="nav-mobile">
+  <a href="#menu"     class="nav-mobile-link">Carta</a>
+  <a href="#delivery" class="nav-mobile-link">Delivery</a>
+  <a href="#contact"  class="nav-mobile-link">Ubicación</a>
+  <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20hacer%20un%20pedido" target="_blank"
+     style="font-family:Oswald,sans-serif;font-weight:900;font-size:1.1rem;padding:0.8rem 2rem;
+            background:var(--yellow);color:var(--dark);text-decoration:none;letter-spacing:0.1em;border-radius:4px;">
+     Pedir ahora
+  </a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <!-- Decorative bolt shapes (SVG, no emoji) -->
+  <div class="deco-bolt l">
+    <svg width="280" height="400" viewBox="0 0 60 100" fill="currentColor" style="color:var(--yellow)">
+      <polygon points="35,0 10,55 30,55 20,100 55,38 32,38"/>
+    </svg>
+  </div>
+  <div class="deco-bolt r">
+    <svg width="220" height="320" viewBox="0 0 60 100" fill="currentColor" style="color:var(--yellow)">
+      <polygon points="35,0 10,55 30,55 20,100 55,38 32,38"/>
+    </svg>
+  </div>
+  <canvas id="sparks"></canvas>
+
+  <div class="hero-inner">
+    <div class="hero-badge">Pollería &amp; Delivery · Balconcillo · La Victoria</div>
+    <h1 class="hero-title">
+      SUPER
+      <span class="flash">FLASH</span>
+      <span class="chicken">CHICKEN</span>
+    </h1>
+    <p class="hero-sub">El pollo que llega rápido y sabe mejor. Brasa real, precios directos, delivery a tu puerta en Balconcillo.</p>
+
+    <div class="hero-phones">
+      <a href="tel:012621594" class="phone-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        01 262-1594
+      </a>
+      <a href="https://wa.me/51935257048" target="_blank" class="phone-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        935 257 048
+      </a>
+      <a href="https://wa.me/51992778940" target="_blank" class="phone-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        992 778 940
+      </a>
+    </div>
+
+    <div class="hero-actions">
+      <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20hacer%20un%20pedido" target="_blank" class="btn-main">
+        Pedir ahora por WhatsApp
+      </a>
+      <a href="#menu" class="btn-outline-w">Ver la carta</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+  </div>
+</section>
+
+<!-- STATS -->
+<div id="stats">
+  <div class="stat">
+    <div class="stat-num">S/ 17</div>
+    <div class="stat-label">Precio desde</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3</div>
+    <div class="stat-label">Líneas de pedido</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">7</div>
+    <div class="stat-label">Días a la semana</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">Delivery</div>
+    <div class="stat-label">A tu puerta</div>
+  </div>
+</div>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="section-label">Nuestra carta</div>
+  <h2 class="section-title">POLLO AL <span class="hl">FLASH</span></h2>
+  <p class="section-sub">Precios directos, sin vueltas. El mejor pollo a la brasa de Balconcillo.</p>
+
+  <div class="menu-grid">
+
+    <div class="menu-card">
+      <div class="menu-card-head">
+        <h3>Pollos a la Brasa</h3>
+        <svg class="card-head-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+          <path d="M8 12h8M12 8v8"/>
+        </svg>
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-item">
+          <span class="item-name">1/4 Pollo + Papas Fritas + Cremas</span>
+          <div class="item-right">
+            <span class="item-price">S/ 17</span>
+            <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20pedir%201/4%20Pollo%20%2B%20Papas%20%2B%20Cremas%20por%20S/%2017" target="_blank" class="btn-wa">Pedir</a>
+          </div>
+        </div>
+        <div class="menu-item">
+          <span class="item-name">1/2 Pollo + Papas Fritas + Cremas</span>
+          <div class="item-right">
+            <span class="item-price">S/ 33</span>
+            <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20pedir%201/2%20Pollo%20%2B%20Papas%20%2B%20Cremas%20por%20S/%2033" target="_blank" class="btn-wa">Pedir</a>
+          </div>
+        </div>
+        <div class="menu-item">
+          <span class="item-name">1 Pollo entero + Cremas</span>
+          <div class="item-right">
+            <span class="item-price">S/ 40</span>
+            <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20pedir%201%20Pollo%20entero%20%2B%20Cremas%20por%20S/%2040" target="_blank" class="btn-wa">Pedir</a>
+          </div>
+        </div>
+        <div class="menu-item">
+          <span class="item-name">1 Pollo + Papas Fritas + Cremas</span>
+          <div class="item-right">
+            <span class="item-price">S/ 54</span>
+            <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20pedir%201%20Pollo%20%2B%20Papas%20%2B%20Cremas%20por%20S/%2054" target="_blank" class="btn-wa">Pedir</a>
+          </div>
+        </div>
+        <div class="menu-item">
+          <span class="item-name">1 Pollo + Papas + Cremas + Gaseosa 1.5L</span>
+          <div class="item-right">
+            <span class="item-price">S/ 57</span>
+            <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20pedir%201%20Pollo%20%2B%20Papas%20%2B%20Cremas%20%2B%20Gaseosa%201.5L%20por%20S/%2057" target="_blank" class="btn-wa">Pedir</a>
+          </div>
+        </div>
+        <div class="menu-item">
+          <span class="item-name">2 Pollos + Papas + Cremas + Gaseosa 1.5L</span>
+          <div class="item-right">
+            <span class="item-price">S/ 109</span>
+            <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20pedir%202%20Pollos%20%2B%20Papas%20%2B%20Cremas%20%2B%20Gaseosa%201.5L%20por%20S/%20109" target="_blank" class="btn-wa">Pedir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: placeholder for more products -->
+    <div class="menu-card">
+      <div class="menu-card-head">
+        <h3>Mas productos</h3>
+        <svg class="card-head-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </div>
+      <div class="menu-card-body">
+        <div style="padding:2.5rem 0;text-align:center;color:rgba(26,5,0,0.28);font-size:0.88rem;line-height:1.9;">
+          Tenemos mas platos?<br/>
+          <strong style="color:rgba(232,21,10,0.38)">[AGREGA AQUI TUS PRODUCTOS]</strong>
+        </div>
+        <div style="margin-top:1rem;text-align:center;">
+          <a href="https://wa.me/51935257048?text=Hola!%20Que%20mas%20tienen%20en%20carta%3F" target="_blank" class="btn-main" style="font-size:0.85rem;padding:0.75rem 1.5rem;">
+            Ver carta completa en WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FEATURED -->
+<section id="featured">
+  <div class="featured-inner">
+    <div class="featured-visual">
+      <!-- Pon aquí una foto real del combo: assets/combo-2pollos.jpg -->
+      <div style="width:100%;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <div style="color:rgba(255,255,255,0.3);font-size:0.8rem;line-height:1.7;">
+          Pon aqui una foto del combo<br/>
+          <code style="font-size:0.72rem;opacity:0.6;">assets/combo-2pollos.jpg</code>
+        </div>
+      </div>
+      <div class="price-stamp">
+        <span class="ps-label">Solo</span>
+        <span class="ps-amount">S/109</span>
+      </div>
+    </div>
+    <div class="featured-text">
+      <div class="section-label">El mas pedido</div>
+      <h2 class="section-title">2 POLLOS <span class="hl">COMPLETO</span></h2>
+      <p>Dos pollos enteros a la brasa + papas fritas doradas + cremas de la casa + gaseosa de 1.5 litros. El combo perfecto para toda la familia.</p>
+      <div class="tag-row">
+        <span class="tag">2 Pollos enteros</span>
+        <span class="tag">Papas fritas</span>
+        <span class="tag">Cremas</span>
+        <span class="tag">Gaseosa 1.5L</span>
+      </div>
+      <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20pedir%202%20Pollos%20%2B%20Papas%20%2B%20Cremas%20%2B%20Gaseosa%201.5L%20por%20S/%20109" target="_blank" class="btn-main">
+        Pedir este combo
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- DELIVERY -->
+<section id="delivery">
+  <div class="section-label">Siempre disponibles</div>
+  <h2 class="section-title">COMO <span class="hl">PEDIR</span></h2>
+  <p class="section-sub">Delivery a domicilio o recoge en local. Tres lineas disponibles para tu pedido.</p>
+
+  <div class="delivery-grid">
+    <div class="info-card">
+      <div class="info-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <h3>Horario</h3>
+      <p><strong style="color:var(--dark)">[HORARIO AQUI]</strong><br/>Todos los dias</p>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+        </svg>
+      </div>
+      <h3>Linea fija</h3>
+      <p><a href="tel:012621594">01 262-1594</a></p>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+      </div>
+      <h3>WhatsApp 1</h3>
+      <p><a href="https://wa.me/51935257048" target="_blank">935 257 048</a></p>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+      </div>
+      <h3>WhatsApp 2</h3>
+      <p><a href="https://wa.me/51992778940" target="_blank">992 778 940</a></p>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+      <h3>Local</h3>
+      <p>Av. Palermo 405<br/>Balconcillo, La Victoria<br/>Lima, Peru</p>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      </div>
+      <h3>Facebook</h3>
+      <p><a href="https://www.facebook.com/flashchiken2/" target="_blank">Super Flash Chicken</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">Encuentranos</div>
+  <h2 class="section-title">VISITANOS</h2>
+  <p class="section-sub">Estamos en Balconcillo, La Victoria. Ven a disfrutar o pide delivery.</p>
+  <div class="contact-inner">
+    <div class="contact-info">
+      <h3>Informacion de contacto</h3>
+      <div class="contact-row">
+        <div class="c-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="c-text">
+          <strong>Direccion</strong>
+          Av. Palermo 405, Balconcillo, La Victoria, Lima
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="c-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+        </div>
+        <div class="c-text">
+          <strong>Linea fija</strong>
+          <a href="tel:012621594">01 262-1594</a>
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="c-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </div>
+        <div class="c-text">
+          <strong>WhatsApp</strong>
+          <a href="https://wa.me/51935257048" target="_blank">935 257 048</a><br/>
+          <a href="https://wa.me/51992778940" target="_blank">992 778 940</a>
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="c-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </div>
+        <div class="c-text">
+          <strong>Facebook</strong>
+          <a href="https://www.facebook.com/flashchiken2/" target="_blank">Super Flash Chicken</a>
+        </div>
+      </div>
+      <div style="margin-top:2rem">
+        <a href="https://wa.me/51935257048?text=Hola!%20Quiero%20hacer%20un%20pedido" target="_blank" class="btn-main">
+          Pedir ahora por WhatsApp
+        </a>
+      </div>
+    </div>
+    <div class="map-wrap">
+      <iframe
+        src="https://maps.google.com/maps?q=Av+Palermo+405+Balconcillo+La+Victoria+Lima+Peru&z=16&output=embed"
+        allowfullscreen="" loading="lazy" title="Mapa Super Flash Chicken">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">SUPER <span class="fl">FLASH</span> CHICKEN</div>
+    <p>© 2026 Super Flash Chicken · Av. Palermo 405, Balconcillo, La Victoria, Lima</p>
+    <a href="https://www.facebook.com/flashchiken2/" target="_blank">Facebook</a>
+  </div>
+</footer>
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/51935257048?text=Hola!%20Quiero%20hacer%20un%20pedido" target="_blank" class="wa-float" title="Pedir por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  let nraf = false;
+  window.addEventListener('scroll', () => {
+    if (nraf) return; nraf = true;
+    requestAnimationFrame(() => { nav.classList.toggle('scrolled', window.scrollY > 60); nraf = false; });
+  }, { passive: true });
+
+  // Hamburger
+  const burger = document.getElementById('burger');
+  const mob    = document.getElementById('nav-mobile');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('open');
+    mob.classList.toggle('open');
+    document.body.style.overflow = mob.classList.contains('open') ? 'hidden' : '';
+  });
+  document.querySelectorAll('.nav-mobile-link, .nav-mobile a').forEach(l => {
+    l.addEventListener('click', () => {
+      burger.classList.remove('open');
+      mob.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const el = entry.target;
+      if (entry.isIntersecting) {
+        const sibs = el.parentElement.querySelectorAll('.menu-card,.stat,.info-card');
+        const idx  = Array.from(sibs).indexOf(el);
+        setTimeout(() => el.classList.add('visible'), idx * 100);
+      } else {
+        el.classList.remove('visible');
+      }
+    });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.menu-card,.stat,.info-card,.featured-visual,.featured-text').forEach(el => obs.observe(el));
+  setTimeout(() => {
+    document.querySelectorAll('.menu-card,.stat,.info-card,.featured-visual,.featured-text').forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
+    });
+  }, 1200);
+
+  // Electric sparks on hero (white/yellow particles on red bg)
+  const canvas = document.getElementById('sparks');
+  const ctx    = canvas.getContext('2d');
+  function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const COLORS = ['255,255,255,','255,240,80,','255,210,40,','255,255,180,'];
+  function mk(rnd) {
+    return {
+      x: Math.random() * canvas.width,
+      y: rnd ? Math.random() * canvas.height : canvas.height + 4,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: -(Math.random() * 1.8 + 0.4),
+      size: Math.random() * 1.6 + 0.4,
+      life: Math.random() * 0.7 + 0.3,
+      decay: Math.random() * 0.01 + 0.004,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)]
+    };
+  }
+  const sparks = Array.from({ length: 90 }, () => mk(true));
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    sparks.forEach(s => {
+      s.x += s.vx + (Math.random() - 0.5) * 0.3;
+      s.y += s.vy;
+      s.life -= s.decay;
+      if (s.life <= 0 || s.y < -6) Object.assign(s, mk(false));
+      ctx.save();
+      ctx.globalAlpha = s.life * 0.75;
+      ctx.shadowBlur  = 10;
+      ctx.shadowColor = `rgba(${s.color}1)`;
+      ctx.fillStyle   = `rgba(${s.color}${s.life})`;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+</script>
+</body>
+</html>
