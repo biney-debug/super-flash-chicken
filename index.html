@@ -432,6 +432,32 @@
       #stats { flex-direction: column; }
       .stat { border-right: none; border-bottom: 2px solid rgba(200,120,0,0.18); }
       .stat:last-child { border-bottom: none; }
+
+      /* Hero badge: fix overflow, reduce letter-spacing */
+      .hero-badge {
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+        padding: 0.4rem 0.9rem;
+        max-width: calc(100% - 3rem);
+        text-align: center;
+        white-space: normal;
+        word-break: break-word;
+      }
+
+      /* Phone pills: stack cleanly on narrow screens */
+      .hero-phones { flex-direction: column; align-items: center; gap: 0.5rem; }
+      .phone-pill { width: 100%; max-width: 260px; justify-content: center; font-size: 0.9rem; padding: 0.65rem 1rem; }
+
+      /* Menu items: bigger tap targets */
+      .btn-wa { font-size: 0.8rem; padding: 0.5rem 0.85rem; }
+      .item-price { font-size: 1rem; }
+      .menu-item { padding: 0.9rem 0; }
+
+      /* Map: shorter on mobile to save scroll */
+      .map-wrap { height: 240px; }
+
+      /* Featured text: tighter on mobile */
+      .featured-text .section-title { font-size: 2rem; }
     }
     @media (max-width: 480px) {
       .menu-grid, .delivery-grid { grid-template-columns: 1fr; }
