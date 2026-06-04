@@ -38,7 +38,7 @@ super-flash-chicken/
 | ID | Sección | Descripción |
 |----|---------|-------------|
 | `#hero` | Hero | Video de fondo, título animado, badge, teléfonos, CTAs hacia WhatsApp |
-| `#stats` | Stats bar | S/17 · 3 líneas · 7 días · Delivery |
+| `#stats` | Stats bar | S/17 · 3 líneas · 7 días · Delivery — fondo crema, iconos SVG en círculo rojo |
 | `#menu` | Carta | Cards de productos con precios y botones "Pedir" directo a WA |
 | `#featured` | Combo destacado | Sección 2 Pollos Completo S/109 con imagen y CTA |
 | `#delivery` | Cómo pedir | Horario, línea fija, WhatsApp x2, local, Facebook |
@@ -51,7 +51,7 @@ super-flash-chicken/
 ## Funcionalidades
 
 - **Video hero** — `assets/hero.mp4` como fondo con overlay rojo, autoplay, loop, muted, playsinline
-- **Navegación sticky** — transparente sobre el hero, fondo crema al hacer scroll
+- **Navegación sticky** — transparente sobre el hero, fondo crema al hacer scroll (logo 54px, sin encogimiento)
 - **Logo circular** — imagen de marca en nav (48px) y footer (40px), border-radius 50%
 - **Favicon circular** — PNG con esquinas transparentes generado con Pillow
 - **Menú hamburger mobile** — overlay full-screen, botón X, click fuera para cerrar, transición suave
